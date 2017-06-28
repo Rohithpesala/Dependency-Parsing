@@ -62,13 +62,14 @@ class VanillaWordEmbeddingLookup(nn.Module):
             self.word_to_ix[i] = j
             self.vocab.add(i)
             self.word_embeddings.weight.data[j] = torch.FloatTensor(model.wv[i])
-            self.word_embeddings.weight.data[j].requires_grad = False
+            # self.word_embeddings.weight.data[j].requires_grad = False
             j+=1
         self.word_to_ix[UNK_TOK] = j+2
         self.word_to_ix[END_OF_INPUT_TOK] = j+1
         self.word_to_ix[NULL_STACK_TOK] = j
         self.to_ix_len = j+3
-        # self.word_embeddings.weight.requires_grad = False
+        # self.word_embeddings.weight.data[j+2].requires_grad = False
+        self.word_embeddings.weight.requires_grad = False
         # END STUDENT
 
 
