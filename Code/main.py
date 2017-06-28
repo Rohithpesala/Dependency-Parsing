@@ -48,12 +48,14 @@ optimizer = optim.SGD(parser.parameters(), lr=ETA_0)
 
 start_time = time.time()
 for epoch in xrange(1):
+	parser.to_cuda()
     print "Epoch {}".format(epoch+1)
     for i in range(1):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
     
     print "Dev Evaluation"
+    parser.to_cpu()
     parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
