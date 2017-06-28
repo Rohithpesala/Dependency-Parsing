@@ -11,8 +11,11 @@ import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.autograd as ag
+import time
+
 
 from collections import defaultdict
+
 
 # Read in the dataset
 dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
@@ -42,6 +45,8 @@ optimizer = optim.SGD(parser.parameters(), lr=ETA_0)
 
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
+
+start_time = time.time()
 for epoch in xrange(1):
     print "Epoch {}".format(epoch+1)
     for i in range(1):
@@ -53,3 +58,4 @@ for epoch in xrange(1):
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
+print time.time()-start_time
