@@ -57,10 +57,10 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 
 start_time = time.time()
-for epoch in xrange(1):
+for epoch in xrange(10):
     parser.to_cuda()
     print "Epoch {}".format(epoch+1)
-    for i in range(10):
+    for i in range(451):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
     
@@ -70,7 +70,7 @@ for epoch in xrange(1):
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
-torch.save(parser,os.getcwd()+"/Checkpoints/parser")
-torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
-torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
+    torch.save(parser,os.getcwd()+"/Checkpoints/parser")
+    torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
+    torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
 print time.time()-start_time

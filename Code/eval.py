@@ -50,6 +50,6 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/parser"):
 else:
     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 
-dev_sentences = [ sentence for sentence, _ in dataset.dev_data[0:100] ]
+dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
 evaluation.output_preds(consts.D4_4_DEV_FILENAME, parser, dev_sentences)
-# evaluation.output_preds(consts.D3_2_TEST_FILENAME, parser, dataset.test_data)
+evaluation.output_preds(consts.D3_2_TEST_FILENAME, parser, dataset.test_data)
