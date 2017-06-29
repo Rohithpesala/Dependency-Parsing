@@ -37,16 +37,16 @@ DROPOUT = 0.1
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
 word_embedding_lookup = neural_net.VanillaWordEmbeddingLookup(word_to_ix, STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"):
-    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser1"):
+    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser1")
 else:
     action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
-if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
-    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
+if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network1"):
+    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network1")
 else:
     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser"):
-    parser = torch.load(os.getcwd()+"/Checkpoints/parser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser1"):
+    parser = torch.load(os.getcwd()+"/Checkpoints/parser1")
 else:
     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 
@@ -70,7 +70,7 @@ for epoch in xrange(10):
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
-    torch.save(parser,os.getcwd()+"/Checkpoints/parser")
-    torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
-    torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
+    torch.save(parser,os.getcwd()+"/Checkpoints/parser1")
+    torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser1")
+    torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network1")
 print time.time()-start_time

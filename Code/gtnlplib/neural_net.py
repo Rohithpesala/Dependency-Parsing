@@ -52,7 +52,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
         # STUDENT
         # name your embedding member "word_embeddings"
         
-        fname = 'm1'
+        fname = 'model_WSJ'
         model = gensim.models.Word2Vec.load(fname)
         vlen = len((model.wv).vocab)
         self.vocab = set()
