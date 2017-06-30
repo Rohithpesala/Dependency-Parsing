@@ -37,19 +37,19 @@ DROPOUT = 0.1
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
 word_embedding_lookup = neural_net.VanillaWordEmbeddingLookup(word_to_ix, STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"):
-    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser1"):
+    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser1")
 else:
     action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
-if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
-    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
+if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network1"):
+    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network1")
 else:
     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser"):
-    parser = torch.load(os.getcwd()+"/Checkpoints/parser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser1"):
+    parser = torch.load(os.getcwd()+"/Checkpoints/parser1")
 else:
     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 
 dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
-evaluation.output_preds(consts.D4_4_DEV_FILENAME, parser, dev_sentences)
-evaluation.output_preds(consts.D3_2_TEST_FILENAME, parser, dataset.test_data)
+evaluation.output_preds("trained_on_Genia_dev.parse", parser, dev_sentences)
+#evaluation.output_preds(consts.D3_2_TEST_FILENAME, parser, dataset.test_data)
