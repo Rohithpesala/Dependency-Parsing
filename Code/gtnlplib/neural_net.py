@@ -56,7 +56,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
         # model = gensim.models.Word2Vec.load(fname)
         # vlen = len((model.wv).vocab)
         fname = 'Mod_model_GENIA'
-        model = torch.load(os.getcwd()+"/Mod_model_GENIA")
+        model = torch.load("Mod_model_GENIA")
         vlen = len(model)
         self.vocab = set()
         self.word_embeddings = nn.Embedding(vlen+3,self.embedding_dim)
@@ -70,7 +70,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
         for i in model:
             self.word_to_ix[i] = j
             self.vocab.add(i)
-            self.word_embeddings.weight.data[j] = torch.FloatTensor(model[i])
+            self.word_embeddings.weight.data[j] = torch.FloatTensor(model[i].data)
             j+=1
         self.word_to_ix[UNK_TOK] = j+2
         self.word_to_ix[END_OF_INPUT_TOK] = j+1
