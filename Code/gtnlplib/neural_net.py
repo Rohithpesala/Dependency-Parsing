@@ -52,26 +52,26 @@ class VanillaWordEmbeddingLookup(nn.Module):
         # STUDENT
         # name your embedding member "word_embeddings"
         
-        # fname = 'model_WSJ'
-        # model = gensim.models.Word2Vec.load(fname)
-        # vlen = len((model.wv).vocab)
-        fname = 'Mod_model_GENIA'
-        model = torch.load("Mod_model_GENIA")
-        vlen = len(model)
+        fname = 'm1'
+        model = gensim.models.Word2Vec.load(fname)
+        vlen = len((model.wv).vocab)
+        # fname = 'Mod_model_GENIA'
+        # model = torch.load(fname)
+        # vlen = len(model)
         self.vocab = set()
         self.word_embeddings = nn.Embedding(vlen+3,self.embedding_dim)
         j=0
-        # for i in (model.wv).vocab:
-        #     self.word_to_ix[i] = j
-        #     self.vocab.add(i)
-        #     self.word_embeddings.weight.data[j] = torch.FloatTensor(model.wv[i])
-        #     # self.word_embeddings.weight.data[j].requires_grad = False
-        #     j+=1
-        for i in model:
+        for i in (model.wv).vocab:
             self.word_to_ix[i] = j
             self.vocab.add(i)
-            self.word_embeddings.weight.data[j] = torch.FloatTensor(model[i].data)
+            self.word_embeddings.weight.data[j] = torch.FloatTensor(model.wv[i])
+            # self.word_embeddings.weight.data[j].requires_grad = False
             j+=1
+        # for i in model:
+        #     self.word_to_ix[i] = j
+        #     self.vocab.add(i)
+        #     self.word_embeddings.weight.data[j] = torch.FloatTensor(model[i].data)
+        #     j+=1
         self.word_to_ix[UNK_TOK] = j+2
         self.word_to_ix[END_OF_INPUT_TOK] = j+1
         self.word_to_ix[NULL_STACK_TOK] = j

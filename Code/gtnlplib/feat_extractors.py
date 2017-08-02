@@ -1,5 +1,8 @@
 class SimpleFeatureExtractor:
 
+    # def __init__(self):
+    #     self.name = "FE"
+
     def get_features(self, parser_state, **kwargs):
         """
         Take in all the information and return features.
