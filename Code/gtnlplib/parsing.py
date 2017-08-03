@@ -205,9 +205,10 @@ class TransitionParser(nn.Module):
         self.refresh() # clear up hidden states from last run, if need be
 
         padded_sent = sentence + [END_OF_INPUT_TOK]
-        #print padded_sent
+        # print padded_sent
         # Initialize the parser state
         sentence_embs = self.word_embedding_component(padded_sent)
+        # print sentence_embs
 
         parser_state = ParserState(padded_sent, sentence_embs, self.combiner, null_stack_tok_embed=self.null_stack_tok_embed)
         outputs = [] #ag.Variable(torch.LongTensor([0])) # Holds the output of each action decision
@@ -237,10 +238,13 @@ class TransitionParser(nn.Module):
         """
         #else:
         #print sentence_embs
+        # feats = self.feature_extractor.get_features(parser_state)
+        # print feats
+        # return
         while (parser_state.done_parsing() == False):
         	#feat_extractor = feat_extractors.SimpleFeatureExtractor()
         	feats = self.feature_extractor.get_features(parser_state)
-        	#act_chooser = neural_net.ActionChooserNetwork(len(feats)*len(feats[0]))
+        	act_chooser = neural_net.ActionChooserNetwork(len(feats)*len(feats[0]))
         	log_probs = self.action_chooser(feats)
         	outputs.append(log_probs)
         	action_taken = utils.argmax(log_probs)

@@ -57,7 +57,6 @@ def concat_and_flatten(items):
     :param items A list of ag.Variables which are vectors
     :return One long row vector of all of the items concatenated together
     """
-    # print items
     return torch.cat(items, 1).view(1, -1)
 
 

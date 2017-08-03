@@ -49,8 +49,10 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
     combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
 else:
     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
+
 parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser"):
+# parser = torch.load(os.getcwd()+"/Checkpoints/parser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
     parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
 # else:
 #     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
@@ -66,7 +68,7 @@ start_time = time.time()
 for epoch in xrange(10):
     # parser.to_cuda()
     print "Epoch {}".format(epoch+1)
-    for i in range(10):
+    for i in range(4):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
     
