@@ -65,10 +65,10 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 
 start_time = time.time()
-for epoch in xrange(2):
+for epoch in xrange(5):
     # parser.to_cuda()
     print "Epoch {}".format(epoch+1)
-    for i in range(4):
+    for i in range(5):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
         if i%100==0:
