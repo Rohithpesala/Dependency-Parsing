@@ -377,7 +377,7 @@ def train(data, model, optimizer, verbose=True):
         print "Acc: {}  Loss: {}".format(float(correct_actions) / total_actions, tot_loss / instance_count)
 
 
-def evaluate(data, model, verbose=False):
+def evaluate(data, model, verbose=False, outf=False):
 
     correct_actions = 0
     total_actions = 0
@@ -385,11 +385,18 @@ def evaluate(data, model, verbose=False):
     instance_count = 0
     criterion = nn.NLLLoss()
     i = 0
+    act_list = ["SHIFT","REDUCE_L","REDUCE_R"]
+    oline = ""
     for sentence, actions in data:
-    	i+=1
-    	#print i
+        i+=1
+        # print sentence
+        oline += " ".join(sentence) + " |||"
+        #print i
         if len(sentence) > 1:
             outputs, _, actions_done = model(sentence, actions)
+            # print oline, outputs
+
+            # break
 
             loss = ag.Variable(torch.FloatTensor([0]))
             action_idxs = [ ag.Variable(torch.LongTensor([ a ])) for a in actions_done ]
@@ -401,11 +408,15 @@ def evaluate(data, model, verbose=False):
 
             for gold, output in zip(actions_done, outputs):
                 pred_act = utils.argmax(output.data)
+                oline += " "+act_list[pred_act]
                 if pred_act == gold:
                     correct_actions += 1
-
+            oline+="\n"
             total_actions += len(outputs)
 
+    if outf==True:
+        of = open("outfile.txt","w")
+        of.write(oline)
     acc = float(correct_actions) / total_actions
     loss = float(tot_loss) / instance_count
     if verbose:

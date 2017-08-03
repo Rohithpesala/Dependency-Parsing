@@ -1,5 +1,5 @@
 # Data files
-TRAIN_FILE = "data/train.txt"
+TRAIN_FILE = "data/ntrain.txt"
 DEV_FILE = "data/dev.txt"
 TEST_FILE = "data/test.txt"
 PRETRAINED_EMBEDS_FILE = "data/pretrained-embeds.pkl"

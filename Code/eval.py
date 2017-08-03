@@ -37,19 +37,18 @@ DROPOUT = 0.1
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
 word_embedding_lookup = neural_net.VanillaWordEmbeddingLookup(word_to_ix, STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooserg"):
-    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooserg")
+if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"):
+    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser")
 else:
     action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
-if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_networkg"):
-    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_networkg")
+if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
+    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
 else:
     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/parserg"):
-    parser = torch.load(os.getcwd()+"/Checkpoints/parserg")
-else:
-    parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
+parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
+    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
 
 dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
-evaluation.output_preds("trained_on_Seperate_embeds_dev.parse", parser, dev_sentences)
-evaluation.output_preds("trained_on_Seperate_embeds_test.parse", parser, dataset.test_data)
+evaluation.output_preds("dev_check.parse", parser, dev_sentences)
+evaluation.output_preds("test_check.parse", parser, dataset.test_data)

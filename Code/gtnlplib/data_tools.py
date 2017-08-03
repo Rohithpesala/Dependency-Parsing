@@ -1,5 +1,6 @@
 from collections import namedtuple
 from gtnlplib.constants import END_OF_INPUT_TOK, NULL_STACK_TOK
+import random
 
 Instance = namedtuple("Instance", ["sentence", "action_sequence"])
 
@@ -19,6 +20,7 @@ def parse_file(filename):
                 vocab.add(word)
 
             instances.append(Instance(sentence, actions))
+            random.shuffle(instances)
     return instances, vocab
 
 

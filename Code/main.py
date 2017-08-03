@@ -65,18 +65,22 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 
 start_time = time.time()
-for epoch in xrange(10):
+for epoch in xrange(2):
     # parser.to_cuda()
     print "Epoch {}".format(epoch+1)
     for i in range(4):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
+        if i%100==0:
+            torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
+            torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
+            torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
     
     print "Dev Evaluation"
     # parser.to_cpu()
     parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
-    print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
+    # print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
     torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
     torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
