@@ -65,10 +65,10 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 
 start_time = time.time()
-for epoch in xrange(5):
-    # parser.to_cuda()
+for epoch in xrange(7):
+    parser.to_cuda()
     print "Epoch {}".format(epoch+1)
-    for i in range(5):
+    for i in range(478):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
         if i%100==0:
@@ -77,11 +77,15 @@ for epoch in xrange(5):
             torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
     
     print "Dev Evaluation"
-    # parser.to_cpu()
-    parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
+    parser.to_cpu()
+    pacc,ploss = parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     # print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
+    f = open("acc.txt","w")
+    f.write(str(epoch+1))
+    f.write("\n")
+    f.write("Accuracy:"+str(pacc)+"\t"+"loss:"+str(ploss)+"\n")
     torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
     torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
     torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
