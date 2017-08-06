@@ -50,5 +50,5 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
     parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
 
 dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
-evaluation.output_preds("dev_check.parse", parser, dev_sentences)
-evaluation.output_preds("test_check.parse", parser, dataset.test_data)
+evaluation.output_preds("dev_st_v1.parse", parser, dev_sentences)
+evaluation.output_preds("test_st_v1.parse", parser, dataset.test_data)

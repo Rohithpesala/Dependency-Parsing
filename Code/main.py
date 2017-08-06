@@ -52,8 +52,8 @@ else:
 
 parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 # parser = torch.load(os.getcwd()+"/Checkpoints/parser")
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
-    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict_st_v2"):
+    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict_st_v2"))
 # else:
 #     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 
@@ -63,7 +63,7 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
-
+f = open("acc_st_v2.txt","w")
 start_time = time.time()
 for epoch in xrange(7):
     parser.to_cuda()
@@ -72,7 +72,7 @@ for epoch in xrange(7):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
         if i%100==0:
-            torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
+            torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v2")
             torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
             torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
     
@@ -82,11 +82,11 @@ for epoch in xrange(7):
     print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
     # print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
-    f = open("acc.txt","w")
+    
     f.write(str(epoch+1))
     f.write("\n")
     f.write("Accuracy:"+str(pacc)+"\t"+"loss:"+str(ploss)+"\n")
-    torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
+    torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v2")
     torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
     torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
 print time.time()-start_time
