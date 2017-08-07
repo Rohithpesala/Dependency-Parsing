@@ -65,7 +65,7 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 f = open("acc_st_v2.txt","w")
 start_time = time.time()
-for epoch in xrange(20):
+for epoch in xrange(1):
     parser.to_cuda()
     print "Epoch {}".format(epoch+1)
     for i in range(478):
