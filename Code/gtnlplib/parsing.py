@@ -179,7 +179,7 @@ class TransitionParser(nn.Module):
         self.null_stack_tok_embed = nn.Parameter(torch.randn(1, word_embedding_component.output_dim))
 
 
-    def forward(self, sentence, actions=None):
+    def forward(self, sentence, actions=None, prob=False):
     	"""
         Does the core parsing logic.
         If you are supplied actions, you should do those.
@@ -241,34 +241,41 @@ class TransitionParser(nn.Module):
         # feats = self.feature_extractor.get_features(parser_state)
         # print feats
         # return
+        sent_prob = 0.0
         while (parser_state.done_parsing() == False):
-        	#feat_extractor = feat_extractors.SimpleFeatureExtractor()
-        	feats = self.feature_extractor.get_features(parser_state)
-        	act_chooser = neural_net.ActionChooserNetwork(len(feats)*len(feats[0]))
-        	log_probs = self.action_chooser(feats)
-        	outputs.append(log_probs)
-        	action_taken = utils.argmax(log_probs)
-        	if have_gold_actions:
-        		action_taken = action_queue.popleft()
-        	if action_taken != Actions.SHIFT:
-        		if parser_state.stack_len()<2:
-        			parser_state.shift()
-        			actions_done.append(Actions.SHIFT)
-        		else:
-        			dep_graph.add(parser_state._reduce(action_taken))
-        			actions_done.append(action_taken)
-        	else:
-        		if parser_state.input_buffer_len() == 1:
-        			dep_graph.add(parser_state._reduce(Actions.REDUCE_R))
-        			actions_done.append(Actions.REDUCE_R)
-        		else:
-        			parser_state.shift()
-        			actions_done.append(Actions.SHIFT)
+            #feat_extractor = feat_extractors.SimpleFeatureExtractor()
+            feats = self.feature_extractor.get_features(parser_state)
+            act_chooser = neural_net.ActionChooserNetwork(len(feats)*len(feats[0]))
+            log_probs = self.action_chooser(feats)
+            outputs.append(log_probs)
+            action_taken = utils.argmax(log_probs)
+            prob_action =  log_probs.data[0][action_taken]
+            if have_gold_actions:
+            	action_taken = action_queue.popleft()
+            if action_taken != Actions.SHIFT:
+            	if parser_state.stack_len()<2:
+                    parser_state.shift()
+                    actions_done.append(Actions.SHIFT)
+            	else:
+                    dep_graph.add(parser_state._reduce(action_taken))
+                    actions_done.append(action_taken)
+                    sent_prob+=prob_action
+            else:
+            	if parser_state.input_buffer_len() == 1:
+            		dep_graph.add(parser_state._reduce(Actions.REDUCE_R))
+            		actions_done.append(Actions.REDUCE_R)
+            	else:
+                    parser_state.shift()
+                    actions_done.append(Actions.SHIFT)
+                    sent_prob+=prob_action
         # END STUDENT
         #print "yo"
         dep_graph.add(DepGraphEdge((ROOT_TOK, -1), (parser_state.stack[-1].headword, parser_state.stack[-1].headword_pos)))
         #print outputs, dep_graph, actions_done
-        return outputs, dep_graph, actions_done
+        if prob==False:
+            return outputs, dep_graph, actions_done
+        else:
+            return outputs, dep_graph, actions_done, sent_prob/len(sentence)
         #return "as"
         #return actions_done
         #return ag.Variable(torch.LongTensor([0]))
@@ -377,7 +384,7 @@ def train(data, model, optimizer, verbose=True):
         print "Acc: {}  Loss: {}".format(float(correct_actions) / total_actions, tot_loss / instance_count)
 
 
-def evaluate(data, model, verbose=False, outf=False):
+def evaluate(data, model, verbose=False, outf=False, prob=False):
 
     correct_actions = 0
     total_actions = 0
@@ -386,14 +393,26 @@ def evaluate(data, model, verbose=False, outf=False):
     criterion = nn.NLLLoss()
     i = 0
     act_list = ["SHIFT","REDUCE_L","REDUCE_R"]
-    oline = ""
+    tot_lines = []
+    tot_probs = []
+    gold_lines = []
+    # dlen = len(data)
     for sentence, actions in data:
+        oline = ""
+        gline = ""
+        sent_prob = 0.0
         i+=1
         # print sentence
         oline += " ".join(sentence) + " |||"
+        gline += " ".join(sentence) + " |||"
+
         #print i
         if len(sentence) > 1:
-            outputs, _, actions_done = model(sentence, actions)
+            if prob==False:
+                outputs, _, actions_done = model(sentence, actions)
+            else:
+                outputs, _, actions_done, sent_prob = model(sentence, actions, prob=True)
+                outf = True
             # print oline, outputs
 
             # break
@@ -409,14 +428,22 @@ def evaluate(data, model, verbose=False, outf=False):
             for gold, output in zip(actions_done, outputs):
                 pred_act = utils.argmax(output.data)
                 oline += " "+act_list[pred_act]
+                gline += " "+act_list[gold]
                 if pred_act == gold:
                     correct_actions += 1
-            oline+="\n"
+            # oline+="\n"
             total_actions += len(outputs)
-
+            tot_lines.append(oline)
+            gold_lines.append(gline)
+            tot_probs.append(sent_prob)
+    filter_lines = [[x,z] for (x,y,z) in sorted(zip(tot_lines,tot_probs,gold_lines), key=lambda pair: pair[1],reverse=True)]
     if outf==True:
-        of = open("outfile.txt","w")
-        of.write(oline)
+        of = open("train_st_v3.txt","a")
+        of.write("\n".join([f[0] for f in filter_lines[0:25]]))
+        of.write("\n")
+        df = open("dev_st_v3.txt","w")
+        df.write("\n".join([f[1] for f in filter_lines[25:len(filter_lines)]]))
+        df.write("\n")
     acc = float(correct_actions) / total_actions
     loss = float(tot_loss) / instance_count
     if verbose:

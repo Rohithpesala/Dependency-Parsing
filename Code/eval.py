@@ -48,7 +48,9 @@ else:
 parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
     parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
+parser = torch.load(os.getcwd()+"/Checkpoints/parser")
 
-dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
-evaluation.output_preds("dev_st_v1.parse", parser, dev_sentences)
-evaluation.output_preds("test_st_v1.parse", parser, dataset.test_data)
+parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True, prob=True)
+# dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
+# evaluation.output_preds("dev_st_v1.parse", parser, dev_sentences)
+# evaluation.output_preds("test_st_v2.parse", parser, dataset.test_data)

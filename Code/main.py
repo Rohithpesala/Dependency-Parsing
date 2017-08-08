@@ -37,23 +37,25 @@ DROPOUT = 0.1
 # g - seperate word embeddings trained on WSJ, test on GENIA
 # 1 - joint WE trained on GENIA, test on GENIA
 # ""- joint WE trained on WSJ, test on GENIA
+# "st_v1" - Joint WE trained on WSJ+All_Predicted Genia Dev set
+# "st_v2" - Joint WE trained on WSJ+True Genia Dev set
 
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
 word_embedding_lookup = neural_net.VanillaWordEmbeddingLookup(word_to_ix, STACK_EMBEDDING_DIM)
-if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"):
-    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser_st_v3"):
+    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser_st_v3")
 else:
     action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
-if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
-    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
+if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network_st_v3"):
+    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network_st_v3")
 else:
     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
 
 parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 # parser = torch.load(os.getcwd()+"/Checkpoints/parser")
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict_st_v2"):
-    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict_st_v2"))
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict_st_v3"):
+    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict_st_v3"))
 # else:
 #     parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
 
@@ -63,18 +65,20 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
-f = open("acc_st_v2.txt","w")
+f = open("acc_st_v3.txt","w")
 start_time = time.time()
 for epoch in xrange(1):
+    dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
+
     parser.to_cuda()
     print "Epoch {}".format(epoch+1)
     for i in range(478):
         print i
         parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
         if i%100==0:
-            torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v2")
-            torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
-            torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
+            torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v3")
+            torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser_st_v3")
+            torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network_st_v3")
     
     print "Dev Evaluation"
     parser.to_cpu()
@@ -86,7 +90,8 @@ for epoch in xrange(1):
     f.write(str(epoch+1))
     f.write("\n")
     f.write("Accuracy:"+str(pacc)+"\t"+"loss:"+str(ploss)+"\n")
-    torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v2")
-    torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser")
-    torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network")
+    torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v3")
+    torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser_st_v3")
+    torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network_st_v3")
+    parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
 print time.time()-start_time

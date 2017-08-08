@@ -20,7 +20,7 @@ def parse_file(filename):
                 vocab.add(word)
 
             instances.append(Instance(sentence, actions))
-            random.shuffle(instances)
+            # random.shuffle(instances)
     return instances, vocab
 
 
