@@ -65,15 +65,18 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict_st_v3_1"):
 parameters = filter(lambda p: p.requires_grad, parser.parameters())
 optimizer = optim.SGD(parameters, lr=ETA_0)
 
+
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
 f = open("acc_st_v3_1.txt","w")
 start_time = time.time()
-for epoch in xrange(2):
-    dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
+for epoch in xrange(5):
+    if epoch == 1:
+        parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
+        dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
     tlen = len(dataset.training_data)
 
-    # parser.to_cuda()
+    parser.to_cuda()
     print "Epoch {}".format(epoch+1)
     for i in range(tlen/1000):
         print i
@@ -84,9 +87,9 @@ for epoch in xrange(2):
             torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network_st_v3_1")
     parsing.train(dataset.training_data[1000*(tlen/1000):tlen],parser,optimizer,verbose = True)
     print "Dev Evaluation"
-    # parser.to_cpu()
-    pacc,ploss = parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
-    print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:100], evaluation.fscore))
+    parser.to_cpu()
+    pacc,ploss = parsing.evaluate(dataset.test_data[0:100], parser, verbose=True)
+    print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.test_data[0:100], evaluation.fscore))
     # print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
     
@@ -96,5 +99,4 @@ for epoch in xrange(2):
     torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v3_1")
     torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser_st_v3_1")
     torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network_st_v3_1")
-    parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
 print time.time()-start_time
