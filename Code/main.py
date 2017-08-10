@@ -67,19 +67,20 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 # Shouldn't take too long, even on a laptop
 f = open("acc_st_v3.txt","w")
 start_time = time.time()
-for epoch in xrange(1):
+for epoch in xrange(5):
     dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
+    tlen = len(dataset.training_data)
 
     parser.to_cuda()
     print "Epoch {}".format(epoch+1)
-    for i in range(478):
+    for i in range(tlen/10):
         print i
-        parsing.train(dataset.training_data[(i*100):(i+1)*100], parser, optimizer, verbose=True)
-        if i%100==0:
+        parsing.train(dataset.training_data[(i*10):(i+1)*10], parser, optimizer, verbose=False)
+        if i%1000==0:
             torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict_st_v3")
             torch.save(action_chooser,os.getcwd()+"/Checkpoints/action_chooser_st_v3")
             torch.save(combiner_network,os.getcwd()+"/Checkpoints/combiner_network_st_v3")
-    
+    parsing.train(dataset.training_data[tlen-10*tlen/10:tlen],parser,optimizer,verbose = True)
     print "Dev Evaluation"
     parser.to_cpu()
     pacc,ploss = parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True)
