@@ -1,6 +1,6 @@
 # Data files
-TRAIN_FILE = "data/train_st_v3.txt"
-DEV_FILE = "data/dev_st_v3.txt"
+TRAIN_FILE = "data/train_st_v3_1.txt"
+DEV_FILE = "data/dev_st_v3_1.txt"
 TEST_FILE = "data/test_st_v3.txt"
 PRETRAINED_EMBEDS_FILE = "data/pretrained-embeds.pkl"
 
