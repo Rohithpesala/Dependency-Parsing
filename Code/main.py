@@ -68,12 +68,12 @@ optimizer = optim.SGD(parameters, lr=ETA_0)
 
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
-f = open("acc_st_v3_1.txt","w")
+f = open("acc_st_v3_11.txt","w")
 start_time = time.time()
-for epoch in xrange(5):
-    if epoch == 1:
-        parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
-        dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
+for epoch in xrange(6):
+    # if epoch == 1:
+    #     parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
+    #     dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
     tlen = len(dataset.training_data)
 
     parser.to_cuda()

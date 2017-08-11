@@ -33,24 +33,25 @@ NUM_FEATURES = 3
 # Hyperparameters
 ETA_0 = 0.001
 DROPOUT = 0.1
+ext = "_st_v3_1"
 
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
 word_embedding_lookup = neural_net.VanillaWordEmbeddingLookup(word_to_ix, STACK_EMBEDDING_DIM)
-# if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"):
-#     action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser")
-# else:
-#     action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
-# if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"):
-#     combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network")
-# else:
-#     combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
-# parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
-if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"):
-    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"))
-parser = torch.load(os.getcwd()+"/Checkpoints/parser")
+if os.path.isfile(os.getcwd()+"/Checkpoints/action_chooser"+ext):
+    action_chooser = torch.load(os.getcwd()+"/Checkpoints/action_chooser"+ext)
+else:
+    action_chooser = neural_net.ActionChooserNetwork(STACK_EMBEDDING_DIM * NUM_FEATURES)
+if os.path.isfile(os.getcwd()+"/Checkpoints/combiner_network"+ext):
+    combiner_network = torch.load(os.getcwd()+"/Checkpoints/combiner_network"+ext)
+else:
+    combiner_network = neural_net.MLPCombinerNetwork(STACK_EMBEDDING_DIM)
+parser = parsing.TransitionParser(feat_extractor, word_embedding_lookup, action_chooser, combiner_network)
+if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"+ext):
+    parser.load_state_dict(torch.load(os.getcwd()+"/Checkpoints/parser_dict"+ext))
+# parser = torch.load(os.getcwd()+"/Checkpoints/parser")
 
 # parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True, prob=True)
 # dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
 # evaluation.output_preds("dev_st_v1.parse", parser, dev_sentences)
-evaluation.output_preds("test_st_v0.parse", parser, dataset.test_data)
+evaluation.output_preds("test"+ext+".parse", parser, dataset.test_data)
