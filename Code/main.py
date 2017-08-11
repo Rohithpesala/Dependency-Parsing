@@ -88,8 +88,8 @@ for epoch in xrange(5):
     parsing.train(dataset.training_data[1000*(tlen/1000):tlen],parser,optimizer,verbose = True)
     print "Dev Evaluation"
     parser.to_cpu()
-    pacc,ploss = parsing.evaluate(dataset.test_data[0:100], parser, verbose=True)
-    print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.test_data[0:100], evaluation.fscore))
+    pacc,ploss = parsing.evaluate(dataset.dev_data[0:1000], parser, verbose=True)
+    print "F-Score: {}".format(evaluation.compute_metric(parser, dataset.dev_data[0:1000], evaluation.fscore))
     # print "Attachment Score: {}".format(evaluation.compute_attachment(parser, dataset.dev_data[0:100]))
     print "\n"
     
