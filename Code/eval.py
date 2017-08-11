@@ -33,7 +33,7 @@ NUM_FEATURES = 3
 # Hyperparameters
 ETA_0 = 0.001
 DROPOUT = 0.1
-ext = "_st_v3_1"
+ext = "_st_v3_n10"
 
 torch.manual_seed(1)
 feat_extractor = feat_extractors.SimpleFeatureExtractor()
