@@ -1,7 +1,7 @@
 # Data files
-TRAIN_FILE = "data/train_st_v3_n10.txt"
-DEV_FILE = "data/dev_st_v3_n10.txt"
-TEST_FILE = "data/test_st_v3.txt"
+TRAIN_FILE = "data/train_st_v3_2.txt"
+DEV_FILE = "data/dev_st_v3_2.txt"
+TEST_FILE = "data/test.txt"
 PRETRAINED_EMBEDS_FILE = "data/pretrained-embeds.pkl"
 
 # Prediction output files

@@ -33,7 +33,7 @@ NUM_FEATURES = 3
 # Hyperparameters
 ETA_0 = 0.001
 DROPOUT = 0.1
-ext = "_st_v3_1_n10"
+ext = "_st_v3_2"
 
 # g - seperate word embeddings trained on WSJ, test on GENIA
 # 1 - joint WE trained on GENIA, test on GENIA
@@ -64,14 +64,14 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"+ext):
 
 # torch.save(parser.state_dict(),os.getcwd()+"/Checkpoints/parser_dict")
 parameters = filter(lambda p: p.requires_grad, parser.parameters())
-optimizer = optim.Adam(parameters, lr=ETA_0)
+optimizer = optim.SGD(parameters, lr=ETA_0)
 
 
 # train the thing for a while here.
 # Shouldn't take too long, even on a laptop
-f = open("acc_st_v3_12.txt","w")
+f = open("acc_st_v3_2.txt","w")
 start_time = time.time()
-for epoch in xrange(8):
+for epoch in xrange(10):
     if epoch == 1:
         parsing.evaluate(dataset.dev_data, parser, verbose=True, prob=True)
         dataset = data_tools.Dataset(consts.TRAIN_FILE, consts.DEV_FILE, consts.TEST_FILE)
