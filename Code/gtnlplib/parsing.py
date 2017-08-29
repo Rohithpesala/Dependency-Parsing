@@ -384,7 +384,7 @@ def train(data, model, optimizer, verbose=True):
         print "Acc: {}  Loss: {}".format(float(correct_actions) / total_actions, tot_loss / instance_count)
 
 
-def evaluate(data, model, verbose=False, outf=False, prob=False):
+def evaluate(data, model, verbose=False, outf=False, prob=False, devfile = "dummy_dev_file.txt", trainfile = "dummy_train_file.txt"):
 
     correct_actions = 0
     total_actions = 0
@@ -438,12 +438,12 @@ def evaluate(data, model, verbose=False, outf=False, prob=False):
             tot_probs.append(sent_prob)
     filter_lines = [[x,z] for (x,y,z) in sorted(zip(tot_lines,tot_probs,gold_lines), key=lambda pair: pair[1],reverse=True)]
     if outf==True:
-        of = open("data/train_st_v3_2.txt","a")
+        of = open(trainfile,"a")
         of.write("\n".join([f[0] for f in filter_lines[0:10]]))
         of.write("\n")
-        #df = open("data/dev_st_v3_n10.txt","w")
-        #df.write("\n".join([f[1] for f in filter_lines[10:len(filter_lines)]]))
-        #df.write("\n")
+        df = open(devfile,"w")
+        df.write("\n".join([f[1] for f in filter_lines[10:len(filter_lines)]]))
+        df.write("\n")
     acc = float(correct_actions) / total_actions
     loss = float(tot_loss) / instance_count
     if verbose:

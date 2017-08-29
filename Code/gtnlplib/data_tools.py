@@ -21,7 +21,7 @@ def parse_file(filename):
 
             instances.append(Instance(sentence, actions))
             # if "train" in filename:
-            random.shuffle(instances)
+            # random.shuffle(instances)
     return instances, vocab
 
 

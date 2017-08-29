@@ -54,4 +54,5 @@ if os.path.isfile(os.getcwd()+"/Checkpoints/parser_dict"+ext):
 # parsing.evaluate(dataset.dev_data[0:100], parser, verbose=True, prob=True)
 # dev_sentences = [ sentence for sentence, _ in dataset.dev_data ]
 # evaluation.output_preds("dev_st_v1.parse", parser, dev_sentences)
-evaluation.output_preds("test"+ext+".parse", parser, dataset.test_data)
+# evaluation.output_preds("test"+ext+".parse", parser, dataset.test_data)
+evaluation.output_preds("pubmed_test.parse", parser, dataset.test_data)

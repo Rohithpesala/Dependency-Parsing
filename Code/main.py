@@ -33,7 +33,7 @@ NUM_FEATURES = 3
 # Hyperparameters
 ETA_0 = 0.001
 DROPOUT = 0.1
-ext = "_st_v3_2"
+ext = "_st_v3_3"
 
 # g - seperate word embeddings trained on WSJ, test on GENIA
 # 1 - joint WE trained on GENIA, test on GENIA
