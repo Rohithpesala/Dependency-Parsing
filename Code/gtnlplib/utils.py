@@ -71,11 +71,9 @@ def initialize_with_pretrained(pretrained_embeds, word_embedding_component):
     :param word_embedding_component The network component to initialize (i.e, a VanillaWordEmbeddingLookup
         or BiLSTMWordEmbeddingLookup)
     """
-    # STUDENT
     for word, index in word_embedding_component.word_to_ix.items():
         if word in pretrained_embeds:
             word_embedding_component.word_embeddings.weight.data[index] = torch.Tensor(pretrained_embeds[word])
-    # END STUDENT
 
 
 # ===----------------------------------------------------------------===

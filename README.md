@@ -17,9 +17,9 @@ The train, dev and test files are present in the Code/data folder. If you want t
 This folder contains all the backbone files and the files corresponding to the model.
 * parsing.py - Contains the model of the parser in whole.
 * neural_net.py - Different neural network models used such as combiner and action chooser.
-* feat_extractors.py, utils.py - helper files containing useful functions manipulating and retrieving data.
+* feat_extractors.py, utils.py - Helper files containing useful functions manipulating and retrieving data.
 * constants.py - Contains the global constants used over all the project. (Ex: train and test file locations)
-* data_tools.py - helper functions to load the data and handle it appropriately.
+* data_tools.py - Helper functions to load the data and handle it appropriately.
 * evaluation.py - Useful to ouput the predictions to files and analyze the data
 
 ## Acknowledgements

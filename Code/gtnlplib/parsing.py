@@ -72,13 +72,11 @@ class ParserState:
         (i.e, each SHIFT increments this index by 1).
         <END-OF-INPUT> should not be shifted onto the stack ever.
         """
-        # STUDENT
         #print self.curr_input_buff_idx
         if self.input_buffer[ self.curr_input_buff_idx][0] == END_OF_INPUT_TOK and self.stack_len() == 1:
         	return True
 
         return False
-        # END STUDENT
 
     def stack_len(self):
         return len(self.stack)
@@ -133,7 +131,6 @@ class ParserState:
         """
         assert len(self.stack) >= 2, "ERROR: Cannot reduce with stack length less than 2"
         
-        # STUDENT
         # hint: use list.pop()
         x = self.stack.pop()
         y = self.stack.pop()
@@ -144,7 +141,6 @@ class ParserState:
         	self.stack.append(StackEntry(y[0], y[1], self.combiner(y[2],x[2])))
         	return DepGraphEdge((y[0],y[1]),(x[0],x[1]))
         #return [1,2]
-        # END STUDENT
 
     def __str__(self):
         """
@@ -224,7 +220,6 @@ class TransitionParser(nn.Module):
         else:
             have_gold_actions = False
 
-        # STUDENT
         """
         if have_gold_actions:
             for i in action_queue:
@@ -268,7 +263,6 @@ class TransitionParser(nn.Module):
                     parser_state.shift()
                     actions_done.append(Actions.SHIFT)
                     sent_prob+=prob_action
-        # END STUDENT
         #print "yo"
         dep_graph.add(DepGraphEdge((ROOT_TOK, -1), (parser_state.stack[-1].headword, parser_state.stack[-1].headword_pos)))
         #print outputs, dep_graph, actions_done

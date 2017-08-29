@@ -26,11 +26,9 @@ class SimpleFeatureExtractor:
         :return A list of autograd.Variable objects, which are the embeddings of your
             features
         """
-        # STUDENT
         #pass
         out = [0]*3
         x = parser_state.stack_peek_n(2)
         out[0],out[1]= x[0][2],x[1][2]
         out[2] = parser_state.input_buffer_peek_n(1)[0][2]
         return out
-        # END STUDENT

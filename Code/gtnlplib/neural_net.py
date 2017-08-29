@@ -49,7 +49,6 @@ class VanillaWordEmbeddingLookup(nn.Module):
         # it is getting.  Don't worry about this
         self.output_dim = embedding_dim
 
-        # STUDENT
         # name your embedding member "word_embeddings"
         
         fname = 'm1'
@@ -80,7 +79,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
         self.to_ix_len = j+3
         # self.word_embeddings.weight.data[j+2].requires_grad = False
         self.word_embeddings.weight.requires_grad = False
-        # END STUDENT
+
 
 
     def forward(self, sentence):
@@ -98,8 +97,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
             embeds.append(self.word_embeddings(inp[i]))
 
         #embeds = x
-        # STUDENT
-        # END STUDENT
+
         # embeds.weight.requires_grad =False
         return embeds
 
@@ -130,7 +128,6 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
 
         self.output_dim = hidden_dim
 
-        # STUDENT
         # Construct the needed components in this order:
         self.word_embeddings = nn.Embedding(len(self.word_to_ix),self.word_embedding_dim)
         self.lstm = nn.LSTM(self.word_embedding_dim,self.hidden_dim/2,self.num_layers, dropout=dropout,bidirectional=True)
@@ -139,7 +136,7 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
         # Note we want the output dim to be hidden_dim, but since our LSTM
         # is bidirectional, we need to make the output of each direction hidden_dim/2
         # name your embedding member "word_embeddings"
-        # END STUDENT
+
         #print "in C"
         self.hidden = self.init_hidden()
 
@@ -164,7 +161,6 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
                 the embedding lookup components"
         inp = utils.sequence_to_variable(sentence, self.word_to_ix, self.use_cuda)
 
-        # STUDENT
         embeds = []
         inp = utils.sequence_to_variable(sentence, self.word_to_ix, self.use_cuda)
         #print inp
@@ -182,7 +178,7 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
         #    emb = self.word_embeddings(inp[i])
         #print "in",embeds.requires_grad
         return embeds
-        # END STUDENT
+
 
     def init_hidden(self):
         """
@@ -241,7 +237,6 @@ class MLPCombinerNetwork(nn.Module):
         """
         super(MLPCombinerNetwork, self).__init__()
 
-        # STUDENT
         self.l1 = nn.Linear(embedding_dim*2, embedding_dim)
         self.l2 = nn.Linear(embedding_dim,embedding_dim)
         self.th = nn.Tanh()
@@ -250,7 +245,7 @@ class MLPCombinerNetwork(nn.Module):
         # 2. The second linear layer
         # The output of the first linear layer should be embedding_dim
         # (the rest of the input/output dims are thus totally determined)
-        # END STUDENT
+
 
     def forward(self, head_embed, modifier_embed):
         """
@@ -261,12 +256,11 @@ class MLPCombinerNetwork(nn.Module):
         :param modifier_embed The embedding of the modifier in the reduction
         :return The embedding of the combination as a row vector
         """
-        # STUDENT
         inp = utils.concat_and_flatten( [head_embed,modifier_embed])
         #print inp#head_embed,type(modifier_embed)
         return self.l2(self.th(self.l1(inp)))
         #pass
-        # END STUDENT
+
 
 
 class LSTMCombinerNetwork(nn.Module):
@@ -295,9 +289,8 @@ class LSTMCombinerNetwork(nn.Module):
         self.num_layers = num_layers
         self.use_cuda = False
 
-        # STUDENT
         self.lstm = nn.LSTM(self.embedding_dim*2,self.embedding_dim,self.num_layers, dropout=dropout)
-        # END STUDENT
+
 
         self.hidden = self.init_hidden()
 
@@ -333,7 +326,6 @@ class LSTMCombinerNetwork(nn.Module):
         :param head_embed Embedding of the head word
         :param modifier_embed Embedding of the modifier
         """
-        # STUDENT
         inp = utils.concat_and_flatten( [head_embed,modifier_embed]).view(1,1,-1)
         #print inp#head_embed,type(modifier_embed)
         #print "yo"
@@ -341,7 +333,7 @@ class LSTMCombinerNetwork(nn.Module):
         #print b
         return self.hidden[0][0]
         #pass
-        # END STUDENT
+
 
 
     def clear_hidden_state(self):
@@ -371,7 +363,6 @@ class ActionChooserNetwork(nn.Module):
             feature embeddings are concatenated together
         """
         super(ActionChooserNetwork, self).__init__()
-        # STUDENT
         # Construct in this order:
         self.input_dim = input_dim
         self.hlayer_size = self.input_dim
@@ -381,7 +372,7 @@ class ActionChooserNetwork(nn.Module):
         self.lsf = nn.LogSoftmax()
         # 1. The first linear layer (the one that is called first in the network)
         # 2. The second linear layer
-        # END STUDENT
+
 
     def forward(self, inputs):
         """
@@ -392,10 +383,9 @@ class ActionChooserNetwork(nn.Module):
         :return a Variable which is the log probabilities of the actions, of shape (1, 3)
             (it is a row vector, with an entry for each action)
         """
-        # STUDENT
         # print inputs.data
         inp = utils.concat_and_flatten(inputs)
         # print inp
         return self.lsf(self.l2(self.rlu(self.l1(inp))))
         pass
-        # END STUDENT
+
